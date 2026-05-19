@@ -319,12 +319,12 @@
   .hero-image video {
     position: relative; z-index: 1;
     width: min(68%, 360px); height: auto;
-    border-radius: 18px;
     mix-blend-mode: multiply;
     animation: floatY 6s ease-in-out infinite;
   }
   [data-theme="dark"] .hero-image video {
-    mix-blend-mode: screen;
+    mix-blend-mode: lighten;
+    filter: contrast(1.1) brightness(1.05);
   }
   @keyframes floatY { 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-16px) rotate(1.5deg)} }
   .hero-image .speech-bubble {
