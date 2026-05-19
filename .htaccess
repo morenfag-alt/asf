@@ -1,0 +1,19 @@
+RewriteEngine On
+
+# /typing и /typing/ -> typing.html
+RewriteRule ^typing/?$ /typing.html [L,R=200]
+
+# /templates и /templates/ -> templates.html
+RewriteRule ^templates/?$ /templates.html [L,R=200]
+
+# Discord OAuth маршруты (замена netlify functions)
+RewriteRule ^\.netlify/functions/discord-login$ /discord-login.php [L,QSA]
+RewriteRule ^\.netlify/functions/discord-callback$ /discord-callback.php [L,QSA]
+
+# Переменные окружения Discord и Supabase
+# Замени значения на свои реальные ключи:
+SetEnv DISCORD_CLIENT_ID        1502711643333988433
+SetEnv DISCORD_CLIENT_SECRET    G2-YKpEPJ0UewbkzaeVLOumkpfn9edFA
+SetEnv DISCORD_REDIRECT_URI     https://xn--80ac4aie0d0a.com/discord-callback.php
+SetEnv SUPABASE_URL             https://lylenqkxqdhrwycxtlzk.supabase.co
+SetEnv SUPABASE_SERVICE_KEY     eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5bGVucWt4cWRocnd5Y3h0bHprIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODMzMDc4MiwiZXhwIjoyMDkzOTA2NzgyfQ.BBiG-fUolF1MVAmXuIyOH2VhzxubvHq0dQaE_RE10Kg
