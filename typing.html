@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="ru" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -11,45 +10,45 @@
 <script src="theme.js"></script>
 <style>
   :root {
-    --bg: #f6f3ee;
-    --bg2: #efeae0;
-    --card: #fbf9f4;
-    --text: #1a1816;
-    --text2: #6d655c;
-    --accent: #b8864c;
-    --accent2: #9a6e3a;
-    --accent-glow: rgba(184,134,76,0.18);
-    --border: rgba(26,24,22,0.10);
-    --shadow: 0 1px 2px rgba(26,24,22,0.04), 0 8px 28px rgba(26,24,22,0.06);
+    --bg: #f4f7fc;
+    --bg2: #e8eef8;
+    --card: #ffffff;
+    --text: #0a0a0a;
+    --text2: #4a5568;
+    --accent: #5b9aff;
+    --accent2: #4080e8;
+    --accent-glow: rgba(91,154,255,0.12);
+    --border: rgba(0,0,0,0.07);
+    --shadow: 0 1px 3px rgba(0,0,0,0.03), 0 6px 20px rgba(0,0,0,0.05);
     --radius: 16px;
-    --tag-bg: rgba(184,134,76,0.10);
-    --tag-text: #8a5f2c;
-    --hero-grad-1: #1a1816;
-    --hero-grad-2: #b8864c;
-    --hero-grad-3: #6d655c;
+    --tag-bg: rgba(91,154,255,0.08);
+    --tag-text: #3b7de8;
+    --hero-grad-1: #0a0a0a;
+    --hero-grad-2: #5b9aff;
+    --hero-grad-3: #4a5568;
     --correct: #4a8a4f;
     --incorrect: #c25450;
-    --cursor: #b8864c;
+    --cursor: #5b9aff;
   }
   [data-theme="dark"] {
-    --bg: #15110d;
-    --bg2: #1f1a13;
-    --card: #1c1812;
-    --text: #f1ece2;
-    --text2: #9a8f7e;
-    --accent: #d9a468;
-    --accent2: #e8b783;
-    --accent-glow: rgba(217,164,104,0.22);
-    --border: rgba(241,236,226,0.08);
-    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 36px rgba(0,0,0,0.45);
-    --tag-bg: rgba(217,164,104,0.12);
-    --tag-text: #e8b783;
-    --hero-grad-1: #f1ece2;
-    --hero-grad-2: #d9a468;
-    --hero-grad-3: #9a8f7e;
+    --bg: #0a0e1a;
+    --bg2: #0f1424;
+    --card: #131a2e;
+    --text: #e8ecf4;
+    --text2: #7b8ba8;
+    --accent: #4f8fff;
+    --accent2: #3a7aef;
+    --accent-glow: rgba(79,143,255,0.15);
+    --border: rgba(232,236,244,0.06);
+    --shadow: 0 2px 8px rgba(0,0,0,0.3), 0 12px 40px rgba(0,0,0,0.4);
+    --tag-bg: rgba(79,143,255,0.1);
+    --tag-text: #6ba3ff;
+    --hero-grad-1: #e8ecf4;
+    --hero-grad-2: #4f8fff;
+    --hero-grad-3: #7b8ba8;
     --correct: #6cc474;
     --incorrect: #e07a76;
-    --cursor: #d9a468;
+    --cursor: #4f8fff;
   }
 
   /* View Transitions API */
@@ -84,25 +83,25 @@
   .mesh-bg span { position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform; }
   .mesh-bg .orb1 {
     width: 65vw; height: 65vw;
-    background: radial-gradient(circle, rgba(184,134,76,0.16) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(91,154,255,0.10) 0%, transparent 70%);
     top: -18vw; right: -12vw;
     animation: orbFloat1 24s ease-in-out infinite;
   }
   .mesh-bg .orb2 {
     width: 55vw; height: 55vw;
-    background: radial-gradient(circle, rgba(154,143,126,0.14) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
     bottom: -16vw; left: -10vw;
     animation: orbFloat2 30s ease-in-out infinite;
   }
   .mesh-bg .orb3 {
     width: 35vw; height: 35vw;
-    background: radial-gradient(circle, rgba(217,164,104,0.10) 0%, transparent 65%);
+    background: radial-gradient(circle, rgba(79,143,255,0.06) 0%, transparent 65%);
     top: 40%; left: 35%;
     animation: orbFloat3 20s ease-in-out infinite;
   }
-  [data-theme="light"] .mesh-bg .orb1 { background: radial-gradient(circle, rgba(184,134,76,0.08) 0%, transparent 70%); }
-  [data-theme="light"] .mesh-bg .orb2 { background: radial-gradient(circle, rgba(109,101,92,0.07) 0%, transparent 70%); }
-  [data-theme="light"] .mesh-bg .orb3 { background: radial-gradient(circle, rgba(184,134,76,0.05) 0%, transparent 65%); }
+  [data-theme="dark"] .mesh-bg .orb1 { background: radial-gradient(circle, rgba(79,143,255,0.14) 0%, transparent 70%); }
+  [data-theme="dark"] .mesh-bg .orb2 { background: radial-gradient(circle, rgba(99,102,241,0.10) 0%, transparent 70%); }
+  [data-theme="dark"] .mesh-bg .orb3 { background: radial-gradient(circle, rgba(79,143,255,0.08) 0%, transparent 65%); }
 
   @keyframes orbFloat1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-4%,5%) scale(1.07)} }
   @keyframes orbFloat2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(5%,-4%) scale(1.1)} }
@@ -111,12 +110,19 @@
   /* ── Dot grid ── */
   .dot-grid {
     position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image: radial-gradient(rgba(26,24,22,0.05) 1.5px, transparent 1.5px);
-    background-size: 28px 28px;
+    background-image: radial-gradient(rgba(10,14,26,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
     transition: background-image 0.4s ease;
   }
   [data-theme="dark"] .dot-grid {
-    background-image: radial-gradient(rgba(241,236,226,0.05) 1.5px, transparent 1.5px);
+    background-image: radial-gradient(rgba(79,143,255,0.04) 1px, transparent 1px);
+  }
+
+  /* ── Floating Russian letters canvas ── */
+  #ruLettersCanvas {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+    width: 100%; height: 100%;
   }
 
   /* Keep content above background layers */
@@ -125,14 +131,14 @@
   /* HEADER */
   header {
     position: sticky; top: 0; z-index: 200;
-    background: rgba(246,243,238,0.72);
+    background: rgba(244,247,252,0.75);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     padding: 0 24px;
     transition: background 0.4s, border-color 0.4s;
   }
-  [data-theme="dark"] header { background: rgba(21,17,13,0.78); }
+  [data-theme="dark"] header { background: rgba(10,14,26,0.78); }
   .header-inner {
     max-width: 100%; margin: 0 auto;
     display: flex; align-items: center; justify-content: space-between;
@@ -711,6 +717,7 @@
   <span class="orb3"></span>
 </div>
 <div class="dot-grid" aria-hidden="true"></div>
+<canvas id="ruLettersCanvas" aria-hidden="true"></canvas>
 
 <header>
   <div class="header-inner">
@@ -1158,6 +1165,7 @@ const state = {
   lastKeyTime: null,
   keyIntervals: [],
   errorWords: new Set(),
+  errorTimestamps: [], // elapsed-time (sec) of each error for chart
   pasteBlocked: false,
   checksum: null,
   startTimestamp: null,
@@ -1619,6 +1627,8 @@ function commitWord(typed) {
       state.correctChars++;
     } else {
       state.errorCount++;
+      // Record error timestamp for chart
+      if (state.startTime) state.errorTimestamps.push((Date.now() - state.startTime) / 1000);
     }
   }
 
@@ -1734,6 +1744,7 @@ function restartTest() {
     lastKeyTime: null,
     keyIntervals: [],
     errorWords: new Set(),
+    errorTimestamps: [],
     keyPressCount: 0,
     startTimestamp: null,
     keyPressLog: [],
@@ -1875,6 +1886,48 @@ function drawChart() {
   ctx.strokeStyle = accent;
   ctx.lineWidth = 2;
   ctx.stroke();
+
+  // ── Error markers ──
+  // state.errorTimestamps: array of elapsed-time values (seconds) when each error occurred
+  if (state.errorTimestamps && state.errorTimestamps.length > 0) {
+    const totalT = data[data.length - 1].t;
+    const incorrectColor = getComputedStyle(document.documentElement).getPropertyValue('--incorrect').trim() || '#e07a76';
+
+    state.errorTimestamps.forEach(t => {
+      if (t > totalT) return;
+      const ex = pad.l + (t / totalT) * (W - pad.l - pad.r);
+
+      // Find nearest wpm point for Y
+      let nearest = pts[0];
+      let minDist = Math.abs(data[0].t - t);
+      for (let i = 1; i < data.length; i++) {
+        const d = Math.abs(data[i].t - t);
+        if (d < minDist) { minDist = d; nearest = pts[i]; }
+      }
+      const ey = nearest.y;
+
+      // Vertical drop line
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(ex, H - pad.b);
+      ctx.strokeStyle = incorrectColor + '55';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Circle dot on the line
+      ctx.beginPath();
+      ctx.arc(ex, ey, 4, 0, Math.PI * 2);
+      ctx.fillStyle = incorrectColor;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(ex, ey, 4, 0, Math.PI * 2);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+  }
 }
 
 function closeResults() {
@@ -2269,6 +2322,108 @@ document.fonts.ready.then(() => {
 
 // Keep cursor blinking every frame
 setInterval(() => { CVS.dirty = true; }, 500);
+
+
+// =============================================
+// FLOATING RUSSIAN LETTERS BACKGROUND
+// =============================================
+(function() {
+  'use strict';
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const canvas = document.getElementById('ruLettersCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const RU_CHARS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'.split('');
+  const COUNT = 55;
+  let letters = [];
+  let W = 0, H = 0;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function randomLetter() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const size = 12 + Math.random() * 28;
+    return {
+      ch:    RU_CHARS[Math.floor(Math.random() * RU_CHARS.length)],
+      x:     Math.random() * W,
+      y:     Math.random() * H,
+      size,
+      speedX: (Math.random() - 0.5) * 0.35,
+      speedY: -(0.18 + Math.random() * 0.45),
+      opacity: 0.03 + Math.random() * 0.11,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.004,
+      // каждая буква меняется через случайный интервал
+      changeIn: 60 + Math.floor(Math.random() * 180),
+    };
+  }
+
+  function init() {
+    resize();
+    letters = Array.from({ length: COUNT }, randomLetter);
+  }
+
+  function getColor(opacity) {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    return isDark
+      ? `rgba(79,143,255,${opacity})`
+      : `rgba(91,154,255,${opacity})`;
+  }
+
+  let frame = 0;
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    frame++;
+
+    letters.forEach((l, i) => {
+      l.x += l.speedX;
+      l.y += l.speedY;
+      l.rotation += l.rotSpeed;
+      l.changeIn--;
+
+      // Выход за экран → телепорт снизу
+      if (l.y < -l.size * 2) {
+        l.y = H + l.size;
+        l.x = Math.random() * W;
+      }
+      if (l.x < -l.size * 2) l.x = W + l.size;
+      if (l.x > W + l.size * 2) l.x = -l.size;
+
+      // Смена буквы
+      if (l.changeIn <= 0) {
+        l.ch = RU_CHARS[Math.floor(Math.random() * RU_CHARS.length)];
+        l.changeIn = 90 + Math.floor(Math.random() * 180);
+      }
+
+      ctx.save();
+      ctx.translate(l.x, l.y);
+      ctx.rotate(l.rotation);
+      ctx.font = `${Math.round(l.size)}px "JetBrains Mono", monospace`;
+      ctx.fillStyle = getColor(l.opacity);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(l.ch, 0, 0);
+      ctx.restore();
+    });
+
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', resize);
+  init();
+  requestAnimationFrame(tick);
+})();
 
 
 // =============================================
