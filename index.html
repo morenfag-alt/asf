@@ -618,8 +618,160 @@
   document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
-<!-- Фоновые частицы (без кастомного курсора) -->
-<script src="particles-cursor.js"></script>
-<script src="smooth-cursor.js"></script>
+<!-- Custom cursor with motion blur trail -->
+<style>
+  /* Hide default cursor and show custom one */
+  body, a, button, [role="button"] {
+    cursor: none !important;
+  }
+  #custom-cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 20px; height: 20px;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate3d(-100px, -100px, 0);
+    will-change: transform;
+    transition: opacity 0.2s;
+  }
+  #custom-cursor svg {
+    width: 20px; height: 20px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));
+  }
+  [data-theme="dark"] #custom-cursor svg .cursor-fill { fill: #e8ecf4; }
+  [data-theme="dark"] #custom-cursor svg .cursor-stroke { stroke: #0a0e1a; }
+  [data-theme="light"] #custom-cursor svg .cursor-fill { fill: #0a0a0a; }
+  [data-theme="light"] #custom-cursor svg .cursor-stroke { stroke: #ffffff; }
+
+  #cursor-trail-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 99998;
+  }
+</style>
+
+<div id="custom-cursor">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path class="cursor-stroke" d="M5.5 3.21V20.8l4.86-4.86h8.14L5.5 3.21z" stroke-width="1.4" fill="none"/>
+    <path class="cursor-fill" d="M5.5 3.21V20.8l4.86-4.86h8.14L5.5 3.21z"/>
+  </svg>
+</div>
+<canvas id="cursor-trail-canvas"></canvas>
+
+<script>
+(function() {
+  'use strict';
+
+  // Skip on touch devices
+  if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const cursor = document.getElementById('custom-cursor');
+  const canvas = document.getElementById('cursor-trail-canvas');
+  const ctx = canvas.getContext('2d');
+
+  let mouseX = -100, mouseY = -100;
+  let cursorX = -100, cursorY = -100;
+  let visible = false;
+  const LERP = 0.25;
+
+  // Trail history
+  const TRAIL_LENGTH = 18;
+  const trail = [];
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function getAccentColor() {
+    const v = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    return v || '#5b9aff';
+  }
+
+  function hexToRgba(hex, alpha) {
+    hex = hex.replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    const n = parseInt(hex, 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + alpha + ')';
+  }
+
+  window.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (!visible) {
+      visible = true;
+      cursor.style.opacity = '1';
+      cursorX = mouseX;
+      cursorY = mouseY;
+    }
+  });
+
+  document.addEventListener('mouseleave', function() {
+    visible = false;
+    cursor.style.opacity = '0';
+  });
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  function tick() {
+    // Smooth follow
+    cursorX += (mouseX - cursorX) * LERP;
+    cursorY += (mouseY - cursorY) * LERP;
+
+    // Move cursor element (tip of arrow at top-left)
+    cursor.style.transform = 'translate3d(' + cursorX + 'px,' + cursorY + 'px,0)';
+
+    // Add to trail
+    trail.push({ x: cursorX + 4, y: cursorY + 4, time: performance.now() });
+    if (trail.length > TRAIL_LENGTH) trail.shift();
+
+    // Draw trail
+    ctx.clearRect(0, 0, canvas.width / (Math.min(window.devicePixelRatio || 1, 2)), canvas.height / (Math.min(window.devicePixelRatio || 1, 2)));
+
+    if (trail.length > 2 && visible) {
+      const accent = getAccentColor();
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      // Draw the motion blur trail as a tapered, fading path
+      for (let i = 1; i < trail.length; i++) {
+        const t = i / trail.length; // 0..1
+        const prev = trail[i - 1];
+        const curr = trail[i];
+
+        const speed = Math.hypot(curr.x - prev.x, curr.y - prev.y);
+        // Only draw trail when moving
+        const alpha = Math.min(1, speed * 0.08) * t * (isDark ? 0.6 : 0.45);
+
+        if (alpha < 0.01) continue;
+
+        ctx.beginPath();
+        ctx.moveTo(prev.x, prev.y);
+        ctx.lineTo(curr.x, curr.y);
+
+        // Width tapers from thin at start to thicker at end
+        ctx.lineWidth = 1.5 + t * 2.5;
+        ctx.strokeStyle = hexToRgba(accent, alpha);
+        ctx.stroke();
+      }
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>
