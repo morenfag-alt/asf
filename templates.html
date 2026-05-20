@@ -217,17 +217,17 @@
     pointer-events: none;
     will-change: transform;
   }
-  /* Левый зрачок: patch top-left = (340/1254, 498/1254) = (27.11%, 39.71%), size = (80/1254) = 6.38% */
+  /* Левый зрачок: patch top-left = (406/1254, 440/1254) = (32.38%, 35.09%), size = (80/1254) = 6.38% */
   #pupilL {
     width: 6.38%;
-    left: 27.11%;
-    top: 39.71%;
+    left: 32.38%;
+    top: 35.09%;
   }
-  /* Правый зрачок: patch top-left = (764/1254, 430/1254) = (60.93%, 34.29%), size = 6.38% */
+  /* Правый зрачок: patch top-left = (752/1254, 442/1254) = (59.97%, 35.25%), size = 6.38% */
   #pupilR {
     width: 6.38%;
-    left: 60.93%;
-    top: 34.29%;
+    left: 59.97%;
+    top: 35.25%;
   }
   @media (max-width: 700px) {
     .hero--with-char { flex-direction: column-reverse; align-items: flex-start; }
@@ -2898,25 +2898,25 @@ document.querySelectorAll('.panel-tab').forEach(tab => {
 
   // Параметры глаз (координаты центра sclera как доля изображения)
   // Центр sclera — точка, вокруг которой двигается зрачок
-  // Левый глаз:  sclera center (449/1254, 505/1254), max travel (49/1254, 15/1254)
-  // Правый глаз: sclera center (764/1254, 509/1254), max travel (24/1254, 19/1254)
+  // Левый глаз:  sclera center (446/1254, 480/1254), max travel (25/1254, 15/1254)
+  // Правый глаз: sclera center (792/1254, 482/1254), max travel (12/1254, 20/1254)
   var EYES = [
     {
       id: 'pupilL',
       // Центр sclera как доля ширины/высоты изображения
-      scx: 449 / 1254,
-      scy: 505 / 1254,
+      scx: 446 / 1254,
+      scy: 480 / 1254,
       // Ход зрачка (max travel) как доля ширины изображения
-      rx: 49 / 1254,
+      rx: 25 / 1254,
       ry: 15 / 1254,
       el: null
     },
     {
       id: 'pupilR',
-      scx: 764 / 1254,
-      scy: 509 / 1254,
-      rx: 24 / 1254,
-      ry: 19 / 1254,
+      scx: 792 / 1254,
+      scy: 482 / 1254,
+      rx: 12 / 1254,
+      ry: 20 / 1254,
       el: null
     }
   ];
