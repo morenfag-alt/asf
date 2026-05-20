@@ -939,15 +939,10 @@
 <!-- MAIN CONTENT -->
 <div class="main-content">
 
-<div class="hero hero--with-char">
+<div class="hero">
   <div class="hero-text-block">
     <h1>Готовые шаблоны на все моменты жизни</h1>
     <p>Найди нужный шаблон, скопируй и используй — быстро, удобно, без лишних вопросов.</p>
-  </div>
-  <div class="hero-char" id="heroChar">
-    <img class="hero-char-base" src="no eyes.png" alt="троляшка" draggable="false">
-    <img class="hero-char-pupil" id="pupilL" src="left eye.png"  alt="" draggable="false">
-    <img class="hero-char-pupil" id="pupilR" src="right eye.png" alt="" draggable="false">
   </div>
 </div>
 
@@ -2880,146 +2875,69 @@ document.querySelectorAll('.panel-tab').forEach(tab => {
   });
 });
 </script>
-<!-- Particles -->
-<script src="particles-cursor.js"></script>
+<!-- Floating words -->
+<canvas id="floatingWords" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></canvas>
 <script>
-(function () {
-  'use strict';
+(function(){
+  var canvas = document.getElementById('floatingWords');
+  var ctx = canvas.getContext('2d');
+  var words = ['чо маме', 'чо папе', 'чо'];
+  var particles = [];
 
-  // Параметры глаз (координаты центра sclera как доля изображения)
-  // Центр sclera — точка, вокруг которой двигается зрачок
-  // Левый глаз:  sclera center (446/1254, 480/1254), max travel (25/1254, 15/1254)
-  // Правый глаз: sclera center (792/1254, 482/1254), max travel (12/1254, 20/1254)
-  var EYES = [
-    {
-      id: 'pupilL',
-      // Центр sclera как доля ширины/высоты изображения
-      scx: 446 / 1254,
-      scy: 480 / 1254,
-      // Ход зрачка (max travel) как доля ширины изображения
-      rx: 25 / 1254,
-      ry: 15 / 1254,
-      el: null
-    },
-    {
-      id: 'pupilR',
-      scx: 792 / 1254,
-      scy: 482 / 1254,
-      rx: 12 / 1254,
-      ry: 20 / 1254,
-      el: null
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function random(min, max){ return Math.random()*(max-min)+min; }
+
+  function Particle(){
+    this.reset();
+  }
+  Particle.prototype.reset = function(){
+    this.word = words[Math.floor(Math.random()*words.length)];
+    this.x = random(0, canvas.width);
+    this.y = random(-80, canvas.height);
+    this.vx = random(-0.4, 0.4);
+    this.vy = random(-0.8, -0.2);
+    this.alpha = random(0.07, 0.22);
+    this.size = random(13, 28);
+    this.color = Math.random() > 0.5 ? '#4f8fff' : '#7b8ba8';
+  };
+  Particle.prototype.update = function(){
+    this.x += this.vx;
+    this.y += this.vy;
+    if(this.y < -60 || this.x < -120 || this.x > canvas.width+120){
+      this.reset();
+      this.y = canvas.height + 20;
     }
-  ];
+  };
+  Particle.prototype.draw = function(){
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.font = 'bold ' + this.size + 'px "Unbounded", sans-serif';
+    ctx.fillStyle = this.color;
+    ctx.fillText(this.word, this.x, this.y);
+    ctx.restore();
+  };
 
-  var mouseX = window.innerWidth / 2;
-  var mouseY = window.innerHeight / 2;
-  var rafId = null;
+  for(var i=0;i<38;i++){
+    var p = new Particle();
+    p.y = random(0, canvas.height);
+    particles.push(p);
+  }
 
-  document.addEventListener('mousemove', function (e) {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
-
-  function tick() {
-    var wrap = document.getElementById('heroChar');
-    if (!wrap) { rafId = requestAnimationFrame(tick); return; }
-
-    var rect = wrap.getBoundingClientRect();
-    if (rect.width < 1) { rafId = requestAnimationFrame(tick); return; }
-
-    var imgW = rect.width;
-    var imgH = rect.height;
-
-    for (var i = 0; i < EYES.length; i++) {
-      var eye = EYES[i];
-      if (!eye.el) { eye.el = document.getElementById(eye.id); }
-      if (!eye.el) continue;
-
-      // Центр sclera в координатах viewport
-      var eyeVX = rect.left + eye.scx * imgW;
-      var eyeVY = rect.top  + eye.scy * imgH;
-
-      // Вектор от центра глаза к курсору
-      var dx = mouseX - eyeVX;
-      var dy = mouseY - eyeVY;
-
-      // Максимальный ход в px
-      var maxX = eye.rx * imgW;
-      var maxY = eye.ry * imgH;
-
-      // Нормированный вектор
-      var dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      var nx = dx / dist;
-      var ny = dy / dist;
-
-      // Зажимаем в эллипс
-      var denom = Math.sqrt((nx / maxX) * (nx / maxX) + (ny / maxY) * (ny / maxY)) || 1;
-      var maxTravel = 1 / denom;
-
-      // Коэффициент 0.4 — чтобы зрачок не летел слишком далеко при близком курсоре
-      var travel = Math.min(dist * 0.4, maxTravel);
-      var tx = nx * travel;
-      var ty = ny * travel;
-
-      eye.el.style.transform = 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px)';
+  function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(var i=0;i<particles.length;i++){
+      particles[i].update();
+      particles[i].draw();
     }
-
-    rafId = requestAnimationFrame(tick);
+    requestAnimationFrame(loop);
   }
-
-  function start() {
-    if (rafId) return;
-    rafId = requestAnimationFrame(tick);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start);
-  } else {
-    start();
-  }
-})();
-</script>
-<!-- Eye-tracking effect -->
-<script>
-(function () {
-  'use strict';
-
-  var MAX_MOVE = 8; // px — максимальное смещение глаз
-
-  var pupilL = document.getElementById('pupilL');
-  var pupilR = document.getElementById('pupilR');
-  var wrap   = document.getElementById('heroChar');
-
-  if (!pupilL || !pupilR || !wrap) return;
-
-  function moveTo(tx, ty) {
-    pupilL.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
-    pupilR.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
-  }
-
-  function onMouseMove(e) {
-    var rect = wrap.getBoundingClientRect();
-    var cx = rect.left + rect.width  / 2;
-    var cy = rect.top  + rect.height / 2;
-
-    var dx = e.clientX - cx;
-    var dy = e.clientY - cy;
-
-    var dist = Math.hypot(dx, dy) || 1;
-    var ratio = Math.min(dist, 120) / 120;
-
-    var tx = (dx / dist) * MAX_MOVE * ratio;
-    var ty = (dy / dist) * MAX_MOVE * ratio;
-
-    moveTo(tx, ty);
-  }
-
-  function onMouseLeave() {
-    moveTo(0, 0);
-  }
-
-  window.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseleave', onMouseLeave);
+  loop();
 })();
 </script>
 </body>
