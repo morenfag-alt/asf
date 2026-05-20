@@ -210,24 +210,14 @@
     display: block;
     width: 100%;
     height: auto;
-    pointer-events: none;
   }
   .hero-char-pupil {
     position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: auto;
     pointer-events: none;
+    transition: transform 0.08s ease-out;
     will-change: transform;
-  }
-  /* Левый зрачок: patch top-left = (406/1254, 440/1254) = (32.38%, 35.09%), size = (80/1254) = 6.38% */
-  #pupilL {
-    width: 6.38%;
-    left: 32.38%;
-    top: 35.09%;
-  }
-  /* Правый зрачок: patch top-left = (752/1254, 442/1254) = (59.97%, 35.25%), size = 6.38% */
-  #pupilR {
-    width: 6.38%;
-    left: 59.97%;
-    top: 35.25%;
   }
   @media (max-width: 700px) {
     .hero--with-char { flex-direction: column-reverse; align-items: flex-start; }
@@ -955,9 +945,9 @@
     <p>Найди нужный шаблон, скопируй и используй — быстро, удобно, без лишних вопросов.</p>
   </div>
   <div class="hero-char" id="heroChar">
-    <img class="hero-char-base" src="stare_base.png" alt="" draggable="false">
-    <img class="hero-char-pupil" id="pupilL" src="stare_pupil_l.png" alt="" draggable="false">
-    <img class="hero-char-pupil" id="pupilR" src="stare_pupil_r.png" alt="" draggable="false">
+    <img class="hero-char-base" src="no eyes.png" alt="троляшка" draggable="false">
+    <img class="hero-char-pupil" id="pupilL" src="left eye.png"  alt="" draggable="false">
+    <img class="hero-char-pupil" id="pupilR" src="right eye.png" alt="" draggable="false">
   </div>
 </div>
 
@@ -2987,6 +2977,49 @@ document.querySelectorAll('.panel-tab').forEach(tab => {
   } else {
     start();
   }
+})();
+</script>
+<!-- Eye-tracking effect -->
+<script>
+(function () {
+  'use strict';
+
+  var MAX_MOVE = 8; // px — максимальное смещение глаз
+
+  var pupilL = document.getElementById('pupilL');
+  var pupilR = document.getElementById('pupilR');
+  var wrap   = document.getElementById('heroChar');
+
+  if (!pupilL || !pupilR || !wrap) return;
+
+  function moveTo(tx, ty) {
+    pupilL.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
+    pupilR.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
+  }
+
+  function onMouseMove(e) {
+    var rect = wrap.getBoundingClientRect();
+    var cx = rect.left + rect.width  / 2;
+    var cy = rect.top  + rect.height / 2;
+
+    var dx = e.clientX - cx;
+    var dy = e.clientY - cy;
+
+    var dist = Math.hypot(dx, dy) || 1;
+    var ratio = Math.min(dist, 120) / 120;
+
+    var tx = (dx / dist) * MAX_MOVE * ratio;
+    var ty = (dy / dist) * MAX_MOVE * ratio;
+
+    moveTo(tx, ty);
+  }
+
+  function onMouseLeave() {
+    moveTo(0, 0);
+  }
+
+  window.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseleave', onMouseLeave);
 })();
 </script>
 </body>
