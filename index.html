@@ -316,10 +316,28 @@
     animation: glowPulse 4s ease-in-out infinite;
   }
   @keyframes glowPulse { 0%,100%{opacity:0.7} 50%{opacity:1} }
-  .hero-image video {
+  /* ── Character eye-tracking ── */
+  .character-wrap {
     position: relative; z-index: 1;
-    width: min(68%, 360px); height: auto;
+    display: inline-block;
+    width: min(68%, 360px);
     animation: floatY 6s ease-in-out infinite;
+    user-select: none;
+  }
+  .char-layer {
+    display: block;
+    width: 100%; height: auto;
+  }
+  .char-base {
+    /* base layer — just renders normally */
+  }
+  .char-eye-left,
+  .char-eye-right {
+    position: absolute;
+    top: 0; left: 0;
+    pointer-events: none;
+    transition: transform 0.08s ease-out;
+    will-change: transform;
   }
   @keyframes floatY { 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-16px) rotate(1.5deg)} }
   .hero-image .speech-bubble {
@@ -553,7 +571,12 @@
     </div>
     <div class="hero-image">
       <div class="glow"></div>
-      <video src="trollchan.webm" autoplay muted loop playsinline></video>
+      <!-- Персонаж с глазами, следящими за курсором -->
+      <div class="character-wrap" id="characterWrap">
+        <img class="char-layer char-base"      src="no eyes.png"       alt="троляшка" draggable="false">
+        <img class="char-layer char-eye-left"  src="left eye.png"      alt=""         draggable="false" id="eyeLeft">
+        <img class="char-layer char-eye-right" src="right eye.png"     alt=""         draggable="false" id="eyeRight">
+      </div>
       <div class="speech-bubble" role="note">Приветствую тебя на сайте троляшка ^-^</div>
     </div>
   </section>
@@ -616,6 +639,53 @@
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+<!-- Eye-tracking effect -->
+<script>
+(function () {
+  'use strict';
+
+  var MAX_MOVE = 8; // px — максимальное смещение глаза
+
+  var eyeLeft  = document.getElementById('eyeLeft');
+  var eyeRight = document.getElementById('eyeRight');
+  var wrap     = document.getElementById('characterWrap');
+
+  if (!eyeLeft || !eyeRight || !wrap) return;
+
+  function moveTo(tx, ty) {
+    eyeLeft.style.transform  = 'translate(' + tx + 'px,' + ty + 'px)';
+    eyeRight.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
+  }
+
+  function onMouseMove(e) {
+    var rect = wrap.getBoundingClientRect();
+    var cx = rect.left + rect.width  / 2;
+    var cy = rect.top  + rect.height / 2;
+
+    var dx = e.clientX - cx;
+    var dy = e.clientY - cy;
+
+    // Нормируем — чем дальше курсор, тем ближе к max,
+    // но не превышаем MAX_MOVE
+    var dist = Math.hypot(dx, dy) || 1;
+    var clampedDist = Math.min(dist, 120); // "зона насыщения"
+    var ratio = clampedDist / 120;
+
+    var tx = (dx / dist) * MAX_MOVE * ratio;
+    var ty = (dy / dist) * MAX_MOVE * ratio;
+
+    moveTo(tx, ty);
+  }
+
+  function onMouseLeave() {
+    moveTo(0, 0);
+  }
+
+  window.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseleave', onMouseLeave);
+})();
 </script>
 
 <!-- Custom cursor with motion blur trail -->
