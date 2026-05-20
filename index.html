@@ -322,45 +322,6 @@
     animation: floatY 6s ease-in-out infinite;
   }
   @keyframes floatY { 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-16px) rotate(1.5deg)} }
-
-  /* ── Eye-tracking character ── */
-  .character-wrap {
-    position: relative;
-    z-index: 1;
-    width: min(68%, 360px);
-    animation: floatY 6s ease-in-out infinite;
-    user-select: none;
-  }
-  .character-base {
-    display: block;
-    width: 100%;
-    height: auto;
-    pointer-events: none;
-  }
-  .pupil {
-    position: absolute;
-    border-radius: 50%;
-    background: #0a0a0a;
-    pointer-events: none;
-    will-change: transform;
-    transition: transform 0.08s linear;
-  }
-  /* Pupil sizes as % of image width (stare.png is 1254px wide) */
-  /* Left eye sclera center at (36.36%, 39.0%) of image */
-  /* Right eye sclera center at (60.78%, 41.99%) of image */
-  .pupil-left {
-    width: 5%;
-    height: 5%;
-    /* Center pupil on left eye: left = 36.36% - half_pupil_width, top = 39.0% - half_pupil_height */
-    left: calc(36.36% - 2.5%);
-    top: calc(39.0% - 2.5%);
-  }
-  .pupil-right {
-    width: 4%;
-    height: 4%;
-    left: calc(60.78% - 2%);
-    top: calc(41.99% - 2%);
-  }
   .hero-image .speech-bubble {
     position: absolute;
     top: 6%;
@@ -592,11 +553,7 @@
     </div>
     <div class="hero-image">
       <div class="glow"></div>
-      <div class="character-wrap" id="characterWrap">
-        <img class="character-base" src="stare.png" alt="Троляшка" draggable="false">
-        <div class="pupil pupil-left" id="pupilLeft" aria-hidden="true"></div>
-        <div class="pupil pupil-right" id="pupilRight" aria-hidden="true"></div>
-      </div>
+      <video src="trollchan.webm" autoplay muted loop playsinline></video>
       <div class="speech-bubble" role="note">Приветствую тебя на сайте троляшка ^-^</div>
     </div>
   </section>
@@ -814,75 +771,6 @@
   }
 
   requestAnimationFrame(tick);
-})();
-</script>
-<script>
-(function () {
-  'use strict';
-
-  // Eye socket centres as fractions of the rendered image
-  const EYES = [
-    { el: document.getElementById('pupilLeft'),  cx: 0.3636, cy: 0.3900, rx: 0.075, ry: 0.055 },
-    { el: document.getElementById('pupilRight'), cx: 0.6078, cy: 0.4199, rx: 0.050, ry: 0.050 },
-  ];
-
-  let mouseX = window.innerWidth / 2;
-  let mouseY = window.innerHeight / 2;
-
-  document.addEventListener('mousemove', function (e) {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
-
-  function updatePupils () {
-    const wrap = document.getElementById('characterWrap');
-    if (!wrap) return;
-    const rect = wrap.getBoundingClientRect();
-    if (rect.width === 0) return;
-
-    const imgW = rect.width;
-    const imgH = rect.height;
-
-    EYES.forEach(function (eye) {
-      if (!eye.el) return;
-
-      // Eye socket centre in viewport coords
-      const eyeX = rect.left + eye.cx * imgW;
-      const eyeY = rect.top  + eye.cy * imgH;
-
-      // Vector from eye to cursor
-      const dx = mouseX - eyeX;
-      const dy = mouseY - eyeY;
-
-      // Max travel distance in pixels
-      const maxX = eye.rx * imgW;
-      const maxY = eye.ry * imgH;
-
-      // Normalise to unit vector then scale to ellipse
-      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-      const nx = dx / dist;
-      const ny = dy / dist;
-
-      // Ellipse clamping: find t such that (nx*t/maxX)^2 + (ny*t/maxY)^2 = 1
-      const denom = Math.sqrt((nx / maxX) * (nx / maxX) + (ny / maxY) * (ny / maxY)) || 1;
-      const maxTravel = 1 / denom;
-
-      const travel = Math.min(dist * 0.35, maxTravel);
-      const tx = nx * travel;
-      const ty = ny * travel;
-
-      eye.el.style.transform = 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px)';
-    });
-
-    requestAnimationFrame(updatePupils);
-  }
-
-  // Start after DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { requestAnimationFrame(updatePupils); });
-  } else {
-    requestAnimationFrame(updatePupils);
-  }
 })();
 </script>
 </body>

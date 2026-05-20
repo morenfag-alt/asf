@@ -187,6 +187,53 @@
   }
   .hero p { color: var(--text2); font-size: 1.05rem; max-width: 520px; line-height: 1.6; }
 
+  /* ── Hero character eye-tracking ── */
+  .hero--with-char {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .hero-text-block { flex: 1; min-width: 0; }
+  .hero-char {
+    position: relative;
+    flex-shrink: 0;
+    width: clamp(160px, 22vw, 280px);
+    animation: charFloat 6s ease-in-out infinite;
+    user-select: none;
+  }
+  @keyframes charFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-10px); }
+  }
+  .hero-char-base {
+    display: block;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+  }
+  .hero-char-pupil {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform;
+  }
+  /* Левый зрачок: patch top-left = (340/1254, 498/1254) = (27.11%, 39.71%), size = (80/1254) = 6.38% */
+  #pupilL {
+    width: 6.38%;
+    left: 27.11%;
+    top: 39.71%;
+  }
+  /* Правый зрачок: patch top-left = (764/1254, 430/1254) = (60.93%, 34.29%), size = 6.38% */
+  #pupilR {
+    width: 6.38%;
+    left: 60.93%;
+    top: 34.29%;
+  }
+  @media (max-width: 700px) {
+    .hero--with-char { flex-direction: column-reverse; align-items: flex-start; }
+    .hero-char { width: clamp(120px, 40vw, 200px); align-self: flex-end; }
+  }
+
   /* SEARCH + FILTER */
   .controls {
     max-width: 1100px; margin: 0 auto;
@@ -902,9 +949,16 @@
 <!-- MAIN CONTENT -->
 <div class="main-content">
 
-<div class="hero">
-  <h1>Готовые шаблоны на все моменты жизни</h1>
-  <p>Найди нужный шаблон, скопируй и используй — быстро, удобно, без лишних вопросов.</p>
+<div class="hero hero--with-char">
+  <div class="hero-text-block">
+    <h1>Готовые шаблоны на все моменты жизни</h1>
+    <p>Найди нужный шаблон, скопируй и используй — быстро, удобно, без лишних вопросов.</p>
+  </div>
+  <div class="hero-char" id="heroChar">
+    <img class="hero-char-base" src="stare_base.png" alt="" draggable="false">
+    <img class="hero-char-pupil" id="pupilL" src="stare_pupil_l.png" alt="" draggable="false">
+    <img class="hero-char-pupil" id="pupilR" src="stare_pupil_r.png" alt="" draggable="false">
+  </div>
 </div>
 
 <!-- TABS -->
@@ -2838,5 +2892,102 @@ document.querySelectorAll('.panel-tab').forEach(tab => {
 </script>
 <!-- Particles -->
 <script src="particles-cursor.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // Параметры глаз (координаты центра sclera как доля изображения)
+  // Центр sclera — точка, вокруг которой двигается зрачок
+  // Левый глаз:  sclera center (449/1254, 505/1254), max travel (49/1254, 15/1254)
+  // Правый глаз: sclera center (764/1254, 509/1254), max travel (24/1254, 19/1254)
+  var EYES = [
+    {
+      id: 'pupilL',
+      // Центр sclera как доля ширины/высоты изображения
+      scx: 449 / 1254,
+      scy: 505 / 1254,
+      // Ход зрачка (max travel) как доля ширины изображения
+      rx: 49 / 1254,
+      ry: 15 / 1254,
+      el: null
+    },
+    {
+      id: 'pupilR',
+      scx: 764 / 1254,
+      scy: 509 / 1254,
+      rx: 24 / 1254,
+      ry: 19 / 1254,
+      el: null
+    }
+  ];
+
+  var mouseX = window.innerWidth / 2;
+  var mouseY = window.innerHeight / 2;
+  var rafId = null;
+
+  document.addEventListener('mousemove', function (e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function tick() {
+    var wrap = document.getElementById('heroChar');
+    if (!wrap) { rafId = requestAnimationFrame(tick); return; }
+
+    var rect = wrap.getBoundingClientRect();
+    if (rect.width < 1) { rafId = requestAnimationFrame(tick); return; }
+
+    var imgW = rect.width;
+    var imgH = rect.height;
+
+    for (var i = 0; i < EYES.length; i++) {
+      var eye = EYES[i];
+      if (!eye.el) { eye.el = document.getElementById(eye.id); }
+      if (!eye.el) continue;
+
+      // Центр sclera в координатах viewport
+      var eyeVX = rect.left + eye.scx * imgW;
+      var eyeVY = rect.top  + eye.scy * imgH;
+
+      // Вектор от центра глаза к курсору
+      var dx = mouseX - eyeVX;
+      var dy = mouseY - eyeVY;
+
+      // Максимальный ход в px
+      var maxX = eye.rx * imgW;
+      var maxY = eye.ry * imgH;
+
+      // Нормированный вектор
+      var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      var nx = dx / dist;
+      var ny = dy / dist;
+
+      // Зажимаем в эллипс
+      var denom = Math.sqrt((nx / maxX) * (nx / maxX) + (ny / maxY) * (ny / maxY)) || 1;
+      var maxTravel = 1 / denom;
+
+      // Коэффициент 0.4 — чтобы зрачок не летел слишком далеко при близком курсоре
+      var travel = Math.min(dist * 0.4, maxTravel);
+      var tx = nx * travel;
+      var ty = ny * travel;
+
+      eye.el.style.transform = 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px)';
+    }
+
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function start() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(tick);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
 </body>
 </html>
