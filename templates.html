@@ -201,6 +201,7 @@
     width: clamp(160px, 22vw, 280px);
     animation: charFloat 6s ease-in-out infinite;
     user-select: none;
+    isolation: isolate;
   }
   @keyframes charFloat {
     0%, 100% { transform: translateY(0); }
@@ -216,18 +217,22 @@
     position: absolute;
     pointer-events: none;
     will-change: transform;
+    /* multiply: white bg → transparent, dark iris stays dark — no empty spot on move */
+    mix-blend-mode: multiply;
   }
-  /* Левый зрачок: patch top-left = (406/1254, 440/1254) = (32.38%, 35.09%), size = (80/1254) = 6.38% */
+  /* Левый зрачок: patch top-left = (407/1254, 435/1254) = (32.46%, 34.69%), size = (80/1254) = 6.38%
+     Центр тёмной области в патче: row=45, col=39 → выравниваем по центру радужки (480, 446) */
   #pupilL {
     width: 6.38%;
-    left: 32.38%;
-    top: 35.09%;
+    left: 32.46%;
+    top: 34.69%;
   }
-  /* Правый зрачок: patch top-left = (752/1254, 442/1254) = (59.97%, 35.25%), size = 6.38% */
+  /* Правый зрачок: patch top-left = (753/1254, 443/1254) = (60.05%, 35.33%), size = 6.38%
+     Центр тёмной области в патче: row=39, col=39 → выравниваем по центру радужки (482, 792) */
   #pupilR {
     width: 6.38%;
-    left: 59.97%;
-    top: 35.25%;
+    left: 60.05%;
+    top: 35.33%;
   }
   @media (max-width: 700px) {
     .hero--with-char { flex-direction: column-reverse; align-items: flex-start; }
