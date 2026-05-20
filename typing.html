@@ -508,6 +508,198 @@
   }
   .logout-btn:hover { color: #ef4444; }
 
+  /* ── HOLOGRAM KEYBOARD ── */
+  .holo-kbd-wrap {
+    margin: 0 0 18px;
+    padding: 12px 14px 10px;
+    border-radius: 14px;
+    background:
+      linear-gradient(180deg, var(--accent-glow), transparent 70%),
+      var(--bg2);
+    border: 1px solid var(--border);
+    box-shadow:
+      inset 0 1px 0 var(--accent-glow),
+      0 0 0 1px var(--accent-glow),
+      0 8px 24px var(--accent-glow);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+  }
+  .holo-kbd-wrap--results {
+    margin: 0 0 22px;
+  }
+  .holo-kbd__legend {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin: 0 2px 8px;
+  }
+  .holo-kbd__legend-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent-glow);
+    animation: holoKbdPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes holoKbdPulse {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.25); }
+  }
+  .holo-kbd {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 6px;
+    border-radius: 10px;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        transparent 0 2px,
+        var(--accent-glow) 2px 3px
+      ),
+      var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .holo-kbd::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: -40%;
+    height: 40%;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      var(--accent-glow) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
+    animation: holoKbdScan 4.5s linear infinite;
+  }
+  @keyframes holoKbdScan {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(360%); }
+  }
+  .holo-kbd__row {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+  }
+  .holo-kbd__key {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 38px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background:
+      linear-gradient(180deg, var(--card), var(--bg2));
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    user-select: none;
+    transition:
+      transform 0.12s ease,
+      background 0.18s ease,
+      box-shadow 0.18s ease,
+      color 0.18s ease,
+      border-color 0.18s ease;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      inset 0 -1px 0 var(--accent-glow);
+  }
+  .holo-kbd__key-ru {
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--text);
+  }
+  .holo-kbd__key-en {
+    font-size: 0.58rem;
+    color: var(--text2);
+    opacity: 0.85;
+  }
+  .holo-kbd__key.is-recent {
+    background:
+      linear-gradient(180deg, var(--accent-glow), var(--bg2));
+    border-color: var(--accent);
+    box-shadow:
+      0 0 0 1px var(--accent-glow),
+      0 0 12px var(--accent-glow);
+  }
+  .holo-kbd__key.is-active {
+    transform: translateY(-2px);
+    background:
+      linear-gradient(180deg, var(--accent), var(--accent2));
+    border-color: var(--accent);
+    color: var(--card);
+    box-shadow:
+      0 0 0 1px var(--accent),
+      0 0 14px var(--accent),
+      0 0 28px var(--accent-glow),
+      0 6px 16px var(--accent-glow);
+  }
+  .holo-kbd__key.is-active .holo-kbd__key-ru,
+  .holo-kbd__key.is-active .holo-kbd__key-en {
+    color: var(--card);
+    opacity: 1;
+  }
+
+  @media (max-width: 640px) {
+    .holo-kbd-wrap { padding: 10px 10px 8px; }
+    .holo-kbd { gap: 3px; padding: 4px; }
+    .holo-kbd__row { gap: 3px; }
+    .holo-kbd__key {
+      height: 30px;
+      font-size: 0.62rem;
+      border-radius: 6px;
+    }
+    .holo-kbd__key-ru { font-size: 0.66rem; }
+    .holo-kbd__key-en { font-size: 0.5rem; }
+  }
+  @media (max-width: 420px) {
+    .holo-kbd-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .holo-kbd {
+      min-width: 380px;
+    }
+    .holo-kbd__key { height: 26px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .holo-kbd::before { animation: none; opacity: 0; }
+    .holo-kbd__legend-dot { animation: none; }
+    .holo-kbd__key {
+      transition: background 0.18s ease, box-shadow 0.18s ease,
+                  color 0.18s ease, border-color 0.18s ease;
+    }
+    .holo-kbd__key.is-active { transform: none; }
+  }
+  .holo-kbd__sr-summary {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
 </style>
 </head>
 <body>
@@ -604,6 +796,9 @@
         <span class="stat-label" id="timerLabel">Таймер</span>
       </div>
     </div>
+
+    <!-- Hologram keyboard (live) -->
+    <div class="holo-kbd-wrap" id="liveKbd" aria-hidden="true"></div>
 
     <!-- Words display: canvas-rendered for 60fps smoothness -->
     <div class="words-wrapper" id="wordsWrapper">
@@ -717,6 +912,9 @@
       <div class="errors-title">СЛОВА С ОШИБКАМИ</div>
       <div class="error-words" id="errorWords"></div>
     </div>
+
+    <!-- Hologram keyboard (results heatmap) -->
+    <div class="holo-kbd-wrap holo-kbd-wrap--results" id="resultKbd" aria-hidden="true"></div>
 
     <div class="results-actions">
       <button class="btn-again" onclick="closeResults(); restartTest()">Ещё раз</button>
@@ -964,6 +1162,8 @@ const state = {
   checksum: null,
   startTimestamp: null,
   keyPressCount: 0,
+  keyPressLog: [],
+  keyHits: new Map(),
 };
 
 // =============================================
@@ -1536,6 +1736,8 @@ function restartTest() {
     errorWords: new Set(),
     keyPressCount: 0,
     startTimestamp: null,
+    keyPressLog: [],
+    keyHits: new Map(),
   });
 
   document.getElementById('typingInput').value = '';
@@ -1545,6 +1747,8 @@ function restartTest() {
   document.getElementById('liveWpm').textContent = '0';
   document.getElementById('liveAcc').textContent = '100%';
   document.getElementById('progressBar').style.width = '0%';
+  const _resKbd = document.getElementById('resultKbd');
+  if (_resKbd) _resKbd.innerHTML = '';
 
   if (state.mode === 'timer') {
     document.getElementById('liveTimer').textContent = state.timerVal + 'с';
@@ -1609,6 +1813,12 @@ function showResults(wpm, raw, cpm, acc, cons, valid) {
   // Chart
   drawChart();
 
+  // Hologram keyboard heatmap
+  const _resKbdEl = document.getElementById('resultKbd');
+  if (_resKbdEl) {
+    renderHoloKeyboard(_resKbdEl, { heatmap: state.keyHits });
+  }
+
   document.getElementById('resultsOverlay').classList.add('open');
 }
 
@@ -1669,6 +1879,8 @@ function drawChart() {
 
 function closeResults() {
   document.getElementById('resultsOverlay').classList.remove('open');
+  const _resKbdEl = document.getElementById('resultKbd');
+  if (_resKbdEl) _resKbdEl.innerHTML = '';
 }
 
 function shareResult() {
@@ -1761,6 +1973,253 @@ document.addEventListener('keyup', (ev) => {
   }
 });
 
+// =============================================
+// HOLOGRAM KEYBOARD
+// =============================================
+const KBD_LAYOUT = [
+  [
+    { code: 'Backquote', ru: 'ё', en: '`' },
+    { code: 'Digit1', ru: '1', en: '1' },
+    { code: 'Digit2', ru: '2', en: '2' },
+    { code: 'Digit3', ru: '3', en: '3' },
+    { code: 'Digit4', ru: '4', en: '4' },
+    { code: 'Digit5', ru: '5', en: '5' },
+    { code: 'Digit6', ru: '6', en: '6' },
+    { code: 'Digit7', ru: '7', en: '7' },
+    { code: 'Digit8', ru: '8', en: '8' },
+    { code: 'Digit9', ru: '9', en: '9' },
+    { code: 'Digit0', ru: '0', en: '0' },
+    { code: 'Minus', ru: '-', en: '-' },
+    { code: 'Equal', ru: '=', en: '=' },
+    { code: 'Backspace', ru: '⌫', en: 'Bksp', w: 2 },
+  ],
+  [
+    { code: 'Tab', ru: 'Tab', en: 'Tab', w: 1.5 },
+    { code: 'KeyQ', ru: 'й', en: 'q' },
+    { code: 'KeyW', ru: 'ц', en: 'w' },
+    { code: 'KeyE', ru: 'у', en: 'e' },
+    { code: 'KeyR', ru: 'к', en: 'r' },
+    { code: 'KeyT', ru: 'е', en: 't' },
+    { code: 'KeyY', ru: 'н', en: 'y' },
+    { code: 'KeyU', ru: 'г', en: 'u' },
+    { code: 'KeyI', ru: 'ш', en: 'i' },
+    { code: 'KeyO', ru: 'щ', en: 'o' },
+    { code: 'KeyP', ru: 'з', en: 'p' },
+    { code: 'BracketLeft', ru: 'х', en: '[' },
+    { code: 'BracketRight', ru: 'ъ', en: ']' },
+    { code: 'Backslash', ru: '\\', en: '\\', w: 1.5 },
+  ],
+  [
+    { code: 'CapsLock', ru: 'Caps', en: 'Caps', w: 1.75 },
+    { code: 'KeyA', ru: 'ф', en: 'a' },
+    { code: 'KeyS', ru: 'ы', en: 's' },
+    { code: 'KeyD', ru: 'в', en: 'd' },
+    { code: 'KeyF', ru: 'а', en: 'f' },
+    { code: 'KeyG', ru: 'п', en: 'g' },
+    { code: 'KeyH', ru: 'р', en: 'h' },
+    { code: 'KeyJ', ru: 'о', en: 'j' },
+    { code: 'KeyK', ru: 'л', en: 'k' },
+    { code: 'KeyL', ru: 'д', en: 'l' },
+    { code: 'Semicolon', ru: 'ж', en: ';' },
+    { code: 'Quote', ru: 'э', en: "'" },
+    { code: 'Enter', ru: '⏎', en: 'Enter', w: 2.25 },
+  ],
+  [
+    { code: 'ShiftLeft', ru: '⇧', en: 'Shift', w: 2.25 },
+    { code: 'KeyZ', ru: 'я', en: 'z' },
+    { code: 'KeyX', ru: 'ч', en: 'x' },
+    { code: 'KeyC', ru: 'с', en: 'c' },
+    { code: 'KeyV', ru: 'м', en: 'v' },
+    { code: 'KeyB', ru: 'и', en: 'b' },
+    { code: 'KeyN', ru: 'т', en: 'n' },
+    { code: 'KeyM', ru: 'ь', en: 'm' },
+    { code: 'Comma', ru: 'б', en: ',' },
+    { code: 'Period', ru: 'ю', en: '.' },
+    { code: 'Slash', ru: '.', en: '/' },
+    { code: 'ShiftRight', ru: '⇧', en: 'Shift', w: 2.75 },
+  ],
+  [
+    { code: 'Space', ru: '␣', en: 'space', w: 6 },
+  ],
+];
+
+function renderHoloKeyboard(rootEl, opts) {
+  if (!rootEl) return;
+  opts = opts || {};
+  const heatmap = opts.heatmap || null;
+
+  // Compute max for normalization (heatmap mode)
+  let maxHits = 0;
+  if (heatmap) {
+    heatmap.forEach((v) => { if (v > maxHits) maxHits = v; });
+  }
+
+  rootEl.innerHTML = '';
+
+  // Legend
+  const legend = document.createElement('div');
+  legend.className = 'holo-kbd__legend';
+  const left = document.createElement('span');
+  left.style.display = 'inline-flex';
+  left.style.alignItems = 'center';
+  left.style.gap = '6px';
+  const dot = document.createElement('span');
+  dot.className = 'holo-kbd__legend-dot';
+  left.appendChild(dot);
+  const lbl = document.createElement('span');
+  lbl.textContent = heatmap ? 'Активность клавиш' : 'Голограмма клавиатуры';
+  left.appendChild(lbl);
+  legend.appendChild(left);
+  if (heatmap) {
+    const right = document.createElement('span');
+    right.style.fontWeight = '500';
+    right.style.letterSpacing = '0.1em';
+    let total = 0;
+    heatmap.forEach((v) => { total += v; });
+    right.textContent = 'Всего нажатий: ' + total;
+    right.title = 'Включая Shift, Tab, Backspace и другие модификаторы';
+    legend.appendChild(right);
+  }
+  rootEl.appendChild(legend);
+
+  // Accessibility: heatmap is informational, expose a textual summary to AT users.
+  // The live keyboard is purely decorative (mirrors physical input) and stays aria-hidden.
+  if (heatmap) {
+    let topCode = null, topHits = 0, total = 0;
+    heatmap.forEach((v, k) => {
+      total += v;
+      if (v > topHits) { topHits = v; topCode = k; }
+    });
+    let topLabel = topCode || '';
+    if (topCode) {
+      for (let r = 0; r < KBD_LAYOUT.length; r++) {
+        const found = KBD_LAYOUT[r].find((k) => k.code === topCode);
+        if (found) { topLabel = found.ru || found.en || topCode; break; }
+      }
+    }
+    const summary = document.createElement('p');
+    summary.className = 'holo-kbd__sr-summary';
+    summary.textContent =
+      'Тепловая карта нажатий клавиш. Всего нажатий: ' + total + '.' +
+      (topCode ? ' Чаще всего нажата клавиша «' + topLabel + '» (' + topHits + ').' : '');
+    rootEl.appendChild(summary);
+    rootEl.removeAttribute('aria-hidden');
+  } else {
+    rootEl.setAttribute('aria-hidden', 'true');
+  }
+
+  // Keyboard
+  const kbd = document.createElement('div');
+  kbd.className = 'holo-kbd';
+
+  KBD_LAYOUT.forEach((row) => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'holo-kbd__row';
+    row.forEach((k) => {
+      const w = k.w || 1;
+      const key = document.createElement('div');
+      key.className = 'holo-kbd__key';
+      key.setAttribute('data-code', k.code);
+      key.style.flex = w + ' 1 0';
+      const ru = document.createElement('span');
+      ru.className = 'holo-kbd__key-ru';
+      ru.textContent = k.ru;
+      const en = document.createElement('span');
+      en.className = 'holo-kbd__key-en';
+      en.textContent = k.en;
+      key.appendChild(ru);
+      key.appendChild(en);
+
+      if (heatmap) {
+        const hits = heatmap.get(k.code) || 0;
+        if (maxHits > 0 && hits > 0) {
+          const ratio = hits / maxHits;
+          const op = 0.15 + ratio * 0.75;
+          key.style.background =
+            'linear-gradient(180deg, var(--accent), var(--accent2))';
+          key.style.opacity = String(op);
+          key.style.borderColor = 'var(--accent)';
+          key.style.color = 'var(--card)';
+          key.style.boxShadow =
+            '0 0 0 1px var(--accent-glow), 0 0 ' +
+            Math.round(6 + ratio * 18) + 'px var(--accent-glow)';
+          key.title = hits + ' нажатий';
+        } else {
+          key.style.opacity = '0.7';
+        }
+      }
+
+      rowEl.appendChild(key);
+    });
+    kbd.appendChild(rowEl);
+  });
+
+  rootEl.appendChild(kbd);
+}
+
+function highlightKey(rootEl, code, on) {
+  if (!rootEl || !code) return;
+  const el = rootEl.querySelector('[data-code="' + code + '"]');
+  if (!el) return;
+  if (on) el.classList.add('is-active');
+  else el.classList.remove('is-active');
+}
+
+function flashKeyRecent(rootEl, code) {
+  if (!rootEl || !code) return;
+  const el = rootEl.querySelector('[data-code="' + code + '"]');
+  if (!el) return;
+  el.classList.add('is-recent');
+  if (el._holoRecentT) clearTimeout(el._holoRecentT);
+  el._holoRecentT = setTimeout(() => {
+    el.classList.remove('is-recent');
+    el._holoRecentT = null;
+  }, 280);
+}
+
+document.addEventListener('keydown', (e) => {
+  const root = document.getElementById('liveKbd');
+  if (root) highlightKey(root, e.code, true);
+  // Skip OS-level auto-repeat ticks: they would otherwise inflate the heatmap
+  // when a key (typically Backspace) is held down.
+  if (e.repeat) return;
+  // Count from page load through finishTest. The previous gate
+  // (`state.started && !state.finished`) dropped the very first keystroke
+  // because `state.started` is flipped inside onInput, which fires AFTER
+  // the keydown that triggers it. restartTest() resets keyHits/keyPressLog
+  // before each test, so accidental presses outside a test are wiped.
+  if (!state.finished) {
+    // NOTE: state.keyPressLog is currently scaffolding: populated and capped
+    // here but not yet consumed. Reserved for future per-key timing analytics.
+    state.keyPressLog.push({ code: e.code, t: performance.now() });
+    if (state.keyPressLog.length > 5000) state.keyPressLog.shift();
+    state.keyHits.set(e.code, (state.keyHits.get(e.code) || 0) + 1);
+  }
+});
+document.addEventListener('keyup', (e) => {
+  const root = document.getElementById('liveKbd');
+  if (root) {
+    highlightKey(root, e.code, false);
+    flashKeyRecent(root, e.code);
+  }
+});
+
+// If the page loses focus mid-press, the matching keyup is delivered to the
+// other window and never reaches this document, leaving keys stuck visually
+// in the .is-active state. Strip all active highlights when focus or
+// visibility is lost so the live keyboard returns to its idle state.
+function _holoClearActive() {
+  const root = document.getElementById('liveKbd');
+  if (!root) return;
+  root.querySelectorAll('.holo-kbd__key.is-active').forEach((el) => {
+    el.classList.remove('is-active');
+  });
+}
+window.addEventListener('blur', _holoClearActive);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) _holoClearActive();
+});
+
 // Detect Latin layout: typed Latin char while word is Cyrillic
 function isLatinChar(ch) { return /^[a-zA-Z]$/.test(ch); }
 function hasCyrillicLetters(str) { return /[а-яёА-ЯЁ]/.test(str); }
@@ -1804,6 +2263,8 @@ document.fonts.ready.then(() => {
   CVS.init();
   restartTest();
   typingInput.focus();
+  const _liveKbdEl = document.getElementById('liveKbd');
+  if (_liveKbdEl) renderHoloKeyboard(_liveKbdEl, {});
 });
 
 // Keep cursor blinking every frame
