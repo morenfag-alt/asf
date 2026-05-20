@@ -681,6 +681,24 @@
     }
     .holo-kbd__key { height: 26px; }
   }
+  @media (prefers-reduced-motion: reduce) {
+    .holo-kbd::before { animation: none; opacity: 0; }
+    .holo-kbd__legend-dot { animation: none; }
+    .holo-kbd__key {
+      transition: background 0.18s ease, box-shadow 0.18s ease,
+                  color 0.18s ease, border-color 0.18s ease;
+    }
+    .holo-kbd__key.is-active { transform: none; }
+  }
+  .holo-kbd__sr-summary {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 
 </style>
 </head>
@@ -1721,9 +1739,6 @@ function restartTest() {
     keyPressLog: [],
     keyHits: new Map(),
   });
-  // Explicit reset for keyboard hologram tracking
-  state.keyPressLog = [];
-  state.keyHits = new Map();
 
   document.getElementById('typingInput').value = '';
   document.getElementById('startHint').style.display = '';
@@ -2061,10 +2076,37 @@ function renderHoloKeyboard(rootEl, opts) {
     right.style.letterSpacing = '0.1em';
     let total = 0;
     heatmap.forEach((v) => { total += v; });
-    right.textContent = total + ' нажатий';
+    right.textContent = 'Всего нажатий: ' + total;
+    right.title = 'Включая Shift, Tab, Backspace и другие модификаторы';
     legend.appendChild(right);
   }
   rootEl.appendChild(legend);
+
+  // Accessibility: heatmap is informational, expose a textual summary to AT users.
+  // The live keyboard is purely decorative (mirrors physical input) and stays aria-hidden.
+  if (heatmap) {
+    let topCode = null, topHits = 0, total = 0;
+    heatmap.forEach((v, k) => {
+      total += v;
+      if (v > topHits) { topHits = v; topCode = k; }
+    });
+    let topLabel = topCode || '';
+    if (topCode) {
+      for (let r = 0; r < KBD_LAYOUT.length; r++) {
+        const found = KBD_LAYOUT[r].find((k) => k.code === topCode);
+        if (found) { topLabel = found.ru || found.en || topCode; break; }
+      }
+    }
+    const summary = document.createElement('p');
+    summary.className = 'holo-kbd__sr-summary';
+    summary.textContent =
+      'Тепловая карта нажатий клавиш. Всего нажатий: ' + total + '.' +
+      (topCode ? ' Чаще всего нажата клавиша «' + topLabel + '» (' + topHits + ').' : '');
+    rootEl.appendChild(summary);
+    rootEl.removeAttribute('aria-hidden');
+  } else {
+    rootEl.setAttribute('aria-hidden', 'true');
+  }
 
   // Keyboard
   const kbd = document.createElement('div');
@@ -2103,7 +2145,7 @@ function renderHoloKeyboard(rootEl, opts) {
             Math.round(6 + ratio * 18) + 'px var(--accent-glow)';
           key.title = hits + ' нажатий';
         } else {
-          key.style.opacity = '0.55';
+          key.style.opacity = '0.7';
         }
       }
 
@@ -2138,7 +2180,17 @@ function flashKeyRecent(rootEl, code) {
 document.addEventListener('keydown', (e) => {
   const root = document.getElementById('liveKbd');
   if (root) highlightKey(root, e.code, true);
-  if (state.started && !state.finished) {
+  // Skip OS-level auto-repeat ticks: they would otherwise inflate the heatmap
+  // when a key (typically Backspace) is held down.
+  if (e.repeat) return;
+  // Count from page load through finishTest. The previous gate
+  // (`state.started && !state.finished`) dropped the very first keystroke
+  // because `state.started` is flipped inside onInput, which fires AFTER
+  // the keydown that triggers it. restartTest() resets keyHits/keyPressLog
+  // before each test, so accidental presses outside a test are wiped.
+  if (!state.finished) {
+    // NOTE: state.keyPressLog is currently scaffolding: populated and capped
+    // here but not yet consumed. Reserved for future per-key timing analytics.
     state.keyPressLog.push({ code: e.code, t: performance.now() });
     if (state.keyPressLog.length > 5000) state.keyPressLog.shift();
     state.keyHits.set(e.code, (state.keyHits.get(e.code) || 0) + 1);
@@ -2150,6 +2202,22 @@ document.addEventListener('keyup', (e) => {
     highlightKey(root, e.code, false);
     flashKeyRecent(root, e.code);
   }
+});
+
+// If the page loses focus mid-press, the matching keyup is delivered to the
+// other window and never reaches this document, leaving keys stuck visually
+// in the .is-active state. Strip all active highlights when focus or
+// visibility is lost so the live keyboard returns to its idle state.
+function _holoClearActive() {
+  const root = document.getElementById('liveKbd');
+  if (!root) return;
+  root.querySelectorAll('.holo-kbd__key.is-active').forEach((el) => {
+    el.classList.remove('is-active');
+  });
+}
+window.addEventListener('blur', _holoClearActive);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) _holoClearActive();
 });
 
 // Detect Latin layout: typed Latin char while word is Cyrillic
