@@ -319,12 +319,7 @@
   .hero-image video {
     position: relative; z-index: 1;
     width: min(68%, 360px); height: auto;
-    mix-blend-mode: multiply;
     animation: floatY 6s ease-in-out infinite;
-  }
-  [data-theme="dark"] .hero-image video {
-    mix-blend-mode: lighten;
-    filter: contrast(1.1) brightness(1.05);
   }
   @keyframes floatY { 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-16px) rotate(1.5deg)} }
   .hero-image .speech-bubble {
@@ -558,7 +553,7 @@
     </div>
     <div class="hero-image">
       <div class="glow"></div>
-      <video src="A_black-and-white_anime-style_girl_with_a_troll-face_mask_resting_on_top_of__her_head_stands_centere_seed1122669614.mp4" autoplay muted loop playsinline></video>
+      <video src="trollchan.webm" autoplay muted loop playsinline></video>
       <div class="speech-bubble" role="note">Приветствую тебя на сайте троляшка ^-^</div>
     </div>
   </section>
